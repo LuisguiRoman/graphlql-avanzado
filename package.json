@@ -8,8 +8,8 @@
     "transpile": "babel ./src --out-dir dist --copy-files",
     "build": "npm-run-all clean transpile",
     "server": "node ./dist/main.js",
-    "prod": "NODE_ENV=production npm-run-all build server",
-    "dev": "NODE_ENV=development npm-run-all build server",
+    "prod": "SET NODE_ENV=production & npm-run-all build server",
+    "dev": "SET NODE_ENV=development & npm-run-all build server",
     "watch:dev": "nodemon",
     "start": "npm run prod"
   },
