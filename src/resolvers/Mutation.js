@@ -68,6 +68,51 @@ const Mutation = {
         });
 
         return {...authorExist, ...data};
+    },
+    createBook: (parent, args, {db}, info) =>{
+        const book = {
+            id: uuidv4(),
+            ...args
+        }
+
+        db.books.push(book);
+
+        return book;
+    },
+    updateBook: (parent, args, {db}, info) =>{
+        const {id, ...data} = args;
+        const bookExist = db.books.find(book => book.id === id);
+
+        if(!bookExist){
+            throw new Error('Libro no encontrado');
+        }
+
+        db.books = db.books.map(book =>{
+            if(book.id === id){
+                return book;
+            }
+            return book;
+        });
+
+        return {...bookExist, ...data};
+    },
+    deleteBook: (parent, {id}, {db}, info) =>{
+        const bookExist = db.books.find(book => book.id === id);
+
+        if(!bookExist){
+            throw new Error('Libro no encontrado');
+        }
+
+        db.books = db.books.reduce((acc, book) =>{
+            //creamos un acumulador y lo iniciamos como un array vacio
+            if(book.id !== id){
+                acc.push(book);
+            }
+
+            return acc;
+        }, []);
+
+        return bookExist;
     }
 }
 

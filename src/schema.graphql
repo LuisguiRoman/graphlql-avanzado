@@ -25,7 +25,7 @@ type Book {
     id: ID!
     title: String!
     description: String!
-    quiantity: Int!
+    quantity: Int!
     price: Int!
     writted_by: Author!
     register_by: User!
@@ -57,4 +57,22 @@ type Mutation {
         country: String
         register_by: ID
     ): Author!
+    createBook(
+        title: String!
+        description: String!
+        quantity: Int!
+        price: Int!
+        writted_by: ID!
+        register_by: ID!
+    ): Book!
+    updateBook(
+        id: ID!
+        title: String
+        description: String
+        quantity: Int
+        price: Int
+        writted_by: ID
+        register_by: ID
+    ): Book!
+    deleteBook(id: ID!): Book!
 }
