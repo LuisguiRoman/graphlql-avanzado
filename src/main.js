@@ -8,12 +8,16 @@ import Query from './resolvers/Query';
 import Author from './resolvers/Author';
 import Book from './resolvers/Book';
 
+//mutations
+import Mutation from './resolvers/Mutation';
+
 const context = { db };
 
 const resolvers = {
     Query,
     Author,
-    Book
+    Book,
+    Mutation
 };
 
 const server = new GraphQLServer({
