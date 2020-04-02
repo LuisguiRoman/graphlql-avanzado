@@ -46,4 +46,15 @@ type Mutation {
         email: String
         password: String
     ): User!
+    createAuthor(
+        name: String!
+        country: String!
+        register_by: ID!
+    ): Author!
+    updateAuthor(
+        id: ID!
+        name: String
+        country: String
+        register_by: ID
+    ): Author!
 }
