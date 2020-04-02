@@ -1,15 +1,25 @@
 import { GraphQLServer } from 'graphql-yoga';
 
+//db dummy
+import db from './db';
+
 //queries
 import Query from './resolvers/Query';
+import Author from './resolvers/Author';
+import Book from './resolvers/Book';
+
+const context = { db };
 
 const resolvers = {
-    Query
+    Query,
+    Author,
+    Book
 };
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql', 
-    resolvers
+    resolvers,
+    context
 });
 
 server.start(() => {
