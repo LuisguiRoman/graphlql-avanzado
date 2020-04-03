@@ -88,3 +88,14 @@ input updateBookInput {
     writted_by: ID
     register_by: ID
 }
+
+
+type Subscription {
+    count: Int!
+    author: AuthorSusbscriptionPayload!
+}
+
+type AuthorSusbscriptionPayload {
+    mutation: String!
+    data: Author!
+}
