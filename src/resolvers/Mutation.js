@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const Mutation = {
-    createUser: (parent, args, {db}, info) =>{
-        const isEmailTaken = db.users.some(user => user.email === args.email);
+    createUser: (parent, {data}, {db}, info) =>{
+        const isEmailTaken = db.users.some(user => user.email === data.email);
 
         if(isEmailTaken){
             throw new Error('El email ya existe');
@@ -10,16 +10,14 @@ const Mutation = {
 
         const user = {
             id: uuidv4(),
-            ...args
+            ...data
         }
 
         db.users.push(user);
 
         return user;
     },
-    updateUser: (parent, args, {db}, info) =>{
-        const {id, ...data} = args;
-
+    updateUser: (parent, {id, ...data}, {db}, info) =>{
         const userExist  = db.users.find(user => user.id === id);
         const isEmailTaken = db.users.some(user => user.email === data.email);
 
@@ -41,18 +39,17 @@ const Mutation = {
 
         return {...userExist, ...data};
     },
-    createAuthor: (parent, args, {db}, info) =>{
+    createAuthor: (parent, {data}, {db}, info) =>{
         const author = {
             id: uuidv4(),
-            ...args
+            ...data
         }
 
         db.authors.push(author);
 
         return author;
     },
-    updateAuthor: (parent, args, {db}, info) =>{
-        const {id, ...data} = args;
+    updateAuthor: (parent, {id, data}, {db}, info) =>{
         const authorExist = db.authors.find(author => author.id === id);
 
         if(!authorExist){
@@ -69,18 +66,17 @@ const Mutation = {
 
         return {...authorExist, ...data};
     },
-    createBook: (parent, args, {db}, info) =>{
+    createBook: (parent, {data}, {db}, info) =>{
         const book = {
             id: uuidv4(),
-            ...args
+            ...data
         }
 
         db.books.push(book);
 
         return book;
     },
-    updateBook: (parent, args, {db}, info) =>{
-        const {id, ...data} = args;
+    updateBook: (parent, {id, data}, {db}, info) =>{
         const bookExist = db.books.find(book => book.id === id);
 
         if(!bookExist){

@@ -32,47 +32,59 @@ type Book {
 }
 
 type Mutation {
-    createUser(
-        name: String!
-        lastName: String!
-        email: String!
-        "password solo se coloca en la creacion para que no lo retorne en las consultas"
-        password: String!
-    ): User!
-    updateUser(
-        id: ID!
-        name: String
-        lastName: String
-        email: String
-        password: String
-    ): User!
-    createAuthor(
-        name: String!
-        country: String!
-        register_by: ID!
-    ): Author!
-    updateAuthor(
-        id: ID!
-        name: String
-        country: String
-        register_by: ID
-    ): Author!
-    createBook(
-        title: String!
-        description: String!
-        quantity: Int!
-        price: Int!
-        writted_by: ID!
-        register_by: ID!
-    ): Book!
-    updateBook(
-        id: ID!
-        title: String
-        description: String
-        quantity: Int
-        price: Int
-        writted_by: ID
-        register_by: ID
-    ): Book!
+    createUser(data: createUserInput): User!
+    updateUser(data: updateUserInput): User!
+    createAuthor(data: createAuthorInput): Author!
+    updateAuthor(data: updateAuthorInput): Author!
+    createBook(data: createBookInput): Book!
+    updateBook(data: updateBookInput): Book!
     deleteBook(id: ID!): Book!
+}
+
+input createUserInput {
+    name: String!
+    lastName: String!
+    email: String!
+    "password solo se coloca en la creacion para que no lo retorne en las consultas"
+    password: String!
+}
+
+input updateUserInput {
+    id: ID!
+    name: String
+    lastName: String
+    email: String
+    password: String
+}
+
+input createAuthorInput {
+    name: String!
+    country: String!
+    register_by: ID!
+}
+
+input updateAuthorInput {
+    id: ID!
+    name: String
+    country: String
+    register_by: ID
+}
+
+input createBookInput {
+    title: String!
+    description: String!
+    quantity: Int!
+    price: Int!
+    writted_by: ID!
+    register_by: ID!
+}
+
+input updateBookInput {
+    id: ID!
+    title: String
+    description: String
+    quantity: Int
+    price: Int
+    writted_by: ID
+    register_by: ID
 }
