@@ -20,6 +20,11 @@ const Subscription = {
             //recibiran la info de este pull
             return pubsub.asyncIterator('author');
         }
+    },
+    book: {
+        subscribe: (parent, {authorId}, {db, pubsub}, info) =>{
+            return pubsub.asyncIterator(`book-${authorId}`);
+        }
     }
 };
 

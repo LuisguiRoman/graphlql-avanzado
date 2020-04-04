@@ -37,7 +37,7 @@ type Mutation {
     createAuthor(data: createAuthorInput): Author!
     updateAuthor(data: updateAuthorInput): Author!
     createBook(data: createBookInput): Book!
-    updateBook(data: updateBookInput): Book!
+    updateBook(id: ID!, data: updateBookInput): Book!
     deleteBook(id: ID!): Book!
 }
 
@@ -80,7 +80,6 @@ input createBookInput {
 }
 
 input updateBookInput {
-    id: ID!
     title: String
     description: String
     quantity: Int
@@ -92,10 +91,16 @@ input updateBookInput {
 
 type Subscription {
     count: Int!
-    author: AuthorSusbscriptionPayload!
+    author: AuthorSubscriptionPayload!
+    book(authorId: ID!): BookSubscriptionPayload!
 }
 
-type AuthorSusbscriptionPayload {
+type AuthorSubscriptionPayload {
     mutation: String!
     data: Author!
+}
+
+type BookSubscriptionPayload {
+    mutation: String!
+    data: Book!
 }

@@ -84,7 +84,13 @@ const Mutation = {
 
         return authorUpdated;
     },
-    createBook: (parent, {data}, {db}, info) =>{
+    createBook: (parent, {data}, {db, pubsub}, info) =>{
+        const isAuthorExist = db.authors.some(author => author.id === data.writted_by);
+
+        if(!isAuthorExist){
+            throw new Error('El author no existe');
+        }
+
         const book = {
             id: uuidv4(),
             ...data
@@ -92,13 +98,26 @@ const Mutation = {
 
         db.books.push(book);
 
+        pubsub.publish(`book-${book.writted_by}`, {
+            book: {
+                mutation: 'CREATED',
+                data: book
+            }
+        });
+
         return book;
     },
-    updateBook: (parent, {id, data}, {db}, info) =>{
+    updateBook: (parent, {id, data}, {db, pubsub}, info) =>{
         const bookExist = db.books.find(book => book.id === id);
 
         if(!bookExist){
             throw new Error('Libro no encontrado');
+        }
+
+        const authorExist = db.authors.some(author => author.id === data.writted_by);
+
+        if(data.writted_by && !authorExist){
+            throw new Error('El author no existe');
         }
 
         db.books = db.books.map(book =>{
@@ -108,9 +127,18 @@ const Mutation = {
             return book;
         });
 
-        return {...bookExist, ...data};
+        const bookUpdated = {...bookExist, ...data};
+
+        pubsub.publish(`book-${bookUpdated.writted_by}`, {
+            book: {
+                mutation: 'UPDATED',
+                data: bookUpdated
+            }
+        });
+
+        return bookUpdated;
     },
-    deleteBook: (parent, {id}, {db}, info) =>{
+    deleteBook: (parent, {id}, {db, pubsub}, info) =>{
         const bookExist = db.books.find(book => book.id === id);
 
         if(!bookExist){
@@ -125,6 +153,13 @@ const Mutation = {
 
             return acc;
         }, []);
+
+        pubsub.publish(`book-${bookExist.writted_by}`, {
+            book: {
+                mutation: 'DELETED',
+                data: bookExist
+            }
+        });
 
         return bookExist;
     }
