@@ -95,12 +95,18 @@ type Subscription {
     book(authorId: ID!): BookSubscriptionPayload!
 }
 
+enum MutationType {
+    CREATED
+    UPDATED
+    DELETED
+}
+
 type AuthorSubscriptionPayload {
-    mutation: String!
+    mutation: MutationType!
     data: Author!
 }
 
 type BookSubscriptionPayload {
-    mutation: String!
+    mutation: MutationType!
     data: Book!
 }
