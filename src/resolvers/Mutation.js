@@ -1,78 +1,60 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const Mutation = {
-    createUser: (parent, {data}, {db}, info) =>{
-        const isEmailTaken = db.users.some(user => user.email === data.email);
-
-        if(isEmailTaken){
-            throw new Error('El email ya existe');
-        }
-
-        const user = {
-            id: uuidv4(),
-            ...data
-        }
-
-        db.users.push(user);
-
-        return user;
+    createUser: (parent, {data}, {prisma}, info) =>{
+        return prisma.users.create({ data });
     },
-    updateUser: (parent, {id, ...data}, {db}, info) =>{
-        const userExist  = db.users.find(user => user.id === id);
-        const isEmailTaken = db.users.some(user => user.email === data.email);
-
-        if(!userExist){
-            throw new Error('User not found');
-        }
-
-        if(isEmailTaken){
-            throw new Error('El email ya existe');
-        }
-
-        db.users = db.users.map(user =>{
-            if(user.id === id){
-                user = {...user, ...data};
-                return user;
-            }
-            return user;
+    updateUser: (parent, {id, ...data}, {prisma}, info) =>{
+        //busca por id y actualiza los datos
+        return prisma.users.update({
+            where: { id },
+            data
         });
-
-        return {...userExist, ...data};
     },
-    createAuthor: (parent, {data}, {db, pubsub}, info) =>{
-        const author = {
-            id: uuidv4(),
-            ...data
-        }
+    createAuthor: async (parent, {data}, {prisma, pubsub}, info) =>{
+        
+        const { register_by, ...rest } = data;
 
-        db.authors.push(author);
+        //crear autor creando la relacion con el usuario que lo creo
+        const newAuthor = await prisma.authors.create({
+            data: {
+                ...rest,
+                users: {
+                    connect: {
+                        id: Number(register_by)
+                    }
+                }
+            }
+        });
 
         //canal y payload
         pubsub.publish('author', {
             author: {
                 mutation: 'CREATED',
-                data: author
+                data: newAuthor
             }
         });
 
-        return author;
+        return newAuthor;
     },
-    updateAuthor: (parent, {id, data}, {db, pubsub}, info) =>{
-        const authorExist = db.authors.find(author => author.id === id);
+    updateAuthor: async (parent, {id, data}, {prisma, pubsub}, info) =>{
 
-        if(!authorExist){
-            throw new Error('El autor no existe');
+        const { register_by } = data;
+
+        if(register_by){//si se esta cambiando el author
+            data.register_by = {
+                connect: {
+                    id: Number(register_by)
+                }
+            };
         }
 
-        db.authors = db.authors.map(author =>{
-            if(author.id === id){
-                author = {...author, ...data};
-                return author;
-            }
-            return author;
+        const authorUpdated = await prisma.authors.update({
+            where:{
+                id: Number(id)
+            },
+            data
         });
-
-        const authorUpdated = {...authorExist, ...data};
 
         //canal y payload
         pubsub.publish('author', {
@@ -84,50 +66,57 @@ const Mutation = {
 
         return authorUpdated;
     },
-    createBook: (parent, {data}, {db, pubsub}, info) =>{
-        const isAuthorExist = db.authors.some(author => author.id === data.writted_by);
+    createBook: async (parent, {data}, {prisma, pubsub}, info) =>{
+        
+        const { writted_by, register_by, ...rest } = data;
 
-        if(!isAuthorExist){
-            throw new Error('El author no existe');
-        }
-
-        const book = {
-            id: uuidv4(),
-            ...data
-        }
-
-        db.books.push(book);
-
-        pubsub.publish(`book-${book.writted_by}`, {
+        //crear libro relacionando el escrityor y creador por id
+        const newBook = await prisma.create({
+            data: {
+                ...rest,
+                writted_by: {
+                    connect: {
+                        id: Number(writted_by)
+                    }
+                },
+                register_by: {
+                    connect: {
+                        id: Number(register_by)
+                    }
+                }
+            }
+        });
+        
+        pubsub.publish(`book-${newBook.writted_by}`, {
             book: {
                 mutation: 'CREATED',
-                data: book
+                data: newBook
             }
         });
 
-        return book;
+        return newBook;
     },
-    updateBook: (parent, {id, data}, {db, pubsub}, info) =>{
-        const bookExist = db.books.find(book => book.id === id);
+    updateBook: async (parent, {id, data}, {prisma, pubsub}, info) =>{
 
-        if(!bookExist){
-            throw new Error('Libro no encontrado');
-        }
+        const { writted_by, register_by } = data;
 
-        const authorExist = db.authors.some(author => author.id === data.writted_by);
-
-        if(data.writted_by && !authorExist){
-            throw new Error('El author no existe');
-        }
-
-        db.books = db.books.map(book =>{
-            if(book.id === id){
-                return book;
+        if(writted_by){//en caso de que se edite el autor
+            data.writted_by = {
+                connect: { id: Number(writted_by) }
             }
-            return book;
-        });
+        }
+        if(register_by){//en caso de que se eudite el creador
+            data.register_by = {
+                connect: { id: Number(register_by) }
+            }
+        }
 
-        const bookUpdated = {...bookExist, ...data};
+        const bookUpdated = await prisma.books.update({
+            where: {
+                id: Number(id)
+            },
+            data
+        });
 
         pubsub.publish(`book-${bookUpdated.writted_by}`, {
             book: {
@@ -138,26 +127,18 @@ const Mutation = {
 
         return bookUpdated;
     },
-    deleteBook: (parent, {id}, {db, pubsub}, info) =>{
-        const bookExist = db.books.find(book => book.id === id);
-
-        if(!bookExist){
-            throw new Error('Libro no encontrado');
-        }
-
-        db.books = db.books.reduce((acc, book) =>{
-            //creamos un acumulador y lo iniciamos como un array vacio
-            if(book.id !== id){
-                acc.push(book);
+    deleteBook: async (parent, {id}, {prisma, pubsub}, info) =>{
+        
+        const bookDeleted = await prisma.books.delete({
+            where: {
+                id: Number(id)
             }
+        });
 
-            return acc;
-        }, []);
-
-        pubsub.publish(`book-${bookExist.writted_by}`, {
+        pubsub.publish(`book-${bookDeleted.writted_by}`, {
             book: {
                 mutation: 'DELETED',
-                data: bookExist
+                data: bookDeleted
             }
         });
 
