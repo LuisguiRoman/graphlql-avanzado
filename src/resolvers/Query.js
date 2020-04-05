@@ -1,21 +1,36 @@
 const Query = {
-    user: (parent, {id}, {db}, info) =>{
+    user: (parent, {id}, {prisma}, info) =>{
         if(!id){//si no tienen id
-            return db.users;
+            //buscar todos los usuarios con prisma
+            return prisma.users.findMany();
         }
-        return db.users.filter(user => user.id === id);
+
+        //buscar usuario por id
+        return prisma.users.findOne({
+            where: { id }
+        });
     },
-    author: (parent, {id}, {db}, info) =>{
+    author: (parent, {id}, {prisma}, info) =>{
         if(!id){
-            return db.authors;
+            //buscar todos los autores
+            return prisma.authors.findMany();;
         }
-        return db.authors.filter(author => author.id === id);
+
+        //buscar author por id
+        return prisma.authors.findOne({
+            where: { id }
+        });
     },
-    book: (parent, {id}, {db}, info) =>{
+    book: (parent, {id}, {prisma}, info) =>{
         if(!id){
-            return db.books;
+            //buscar todos los libros
+            return prisma.books.findMany();
         }
-        return db.books.filter(book => book.id === id);
+
+        //buscar libro por id
+        return prisma.books.findOne({
+            where: { id }
+        });
     }
 }
 
