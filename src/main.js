@@ -1,4 +1,5 @@
 import { GraphQLServer, PubSub } from 'graphql-yoga';
+import { PrismaClient } from '@prisma/client';
 
 //db dummy
 import db from './db';
@@ -14,9 +15,14 @@ import Mutation from './resolvers/Mutation';
 //subscription
 import Subscription from './resolvers/subscription';
 
+
+const prisma = new PrismaClient();
+
 const pubsub = new PubSub();
 
-const context = { db, pubsub };
+const context = {
+    db, pubsub, prisma
+};
 
 const resolvers = {
     Query,
