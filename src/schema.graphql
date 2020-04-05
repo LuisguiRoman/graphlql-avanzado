@@ -9,7 +9,7 @@ type Query {
 type User {
     id: ID!
     name: String!
-    lastName: String!
+    lastname: String!
     email: String!
 }
 
@@ -43,18 +43,15 @@ type Mutation {
 
 input createUserInput {
     name: String!
-    lastName: String!
+    lastname: String!
     email: String!
-    "password solo se coloca en la creacion para que no lo retorne en las consultas"
-    password: String!
 }
 
 input updateUserInput {
     id: ID!
     name: String
-    lastName: String
+    lastname: String
     email: String
-    password: String
 }
 
 input createAuthorInput {

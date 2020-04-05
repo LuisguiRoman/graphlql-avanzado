@@ -13,7 +13,7 @@ const Query = {
     author: (parent, {id}, {prisma}, info) =>{
         if(!id){
             //buscar todos los autores
-            return prisma.authors.findMany();;
+            return prisma.authors.findMany();
         }
 
         //buscar author por id

@@ -42,7 +42,7 @@ const Mutation = {
         const { register_by } = data;
 
         if(register_by){//si se esta cambiando el author
-            data.register_by = {
+            data.users = {
                 connect: {
                     id: Number(register_by)
                 }
@@ -71,15 +71,15 @@ const Mutation = {
         const { writted_by, register_by, ...rest } = data;
 
         //crear libro relacionando el escrityor y creador por id
-        const newBook = await prisma.create({
+        const newBook = await prisma.books.create({
             data: {
                 ...rest,
-                writted_by: {
+                authors: {
                     connect: {
                         id: Number(writted_by)
                     }
                 },
-                register_by: {
+                users: {
                     connect: {
                         id: Number(register_by)
                     }
@@ -101,12 +101,12 @@ const Mutation = {
         const { writted_by, register_by } = data;
 
         if(writted_by){//en caso de que se edite el autor
-            data.writted_by = {
+            data.authors = {
                 connect: { id: Number(writted_by) }
             }
         }
         if(register_by){//en caso de que se eudite el creador
-            data.register_by = {
+            data.users = {
                 connect: { id: Number(register_by) }
             }
         }
@@ -142,7 +142,7 @@ const Mutation = {
             }
         });
 
-        return bookExist;
+        return bookDeleted;
     }
 }
 

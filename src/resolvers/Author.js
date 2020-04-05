@@ -4,7 +4,7 @@ const Author = {
         //y despues buscar el usuario que lo registro
         return prisma.authors.findOne({
             where: { id: parent.id }
-        }).register_by();
+        }).users();
     },
     books: (parent, args, {db}, info) =>{
         //buscar el libro por id 
