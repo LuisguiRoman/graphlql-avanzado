@@ -15,14 +15,15 @@ const Query = {
             where: { id }
         });
     },
-    author: (_, { id, first, skip }, { request, prisma }, info) =>{
+    author: (_, { id, first, skip, orderBy }, { request, prisma }, info) =>{
         const userId = getUserID(request);//ejecutar middleware
 
         if(!id){
             //buscar todos los autores
             return prisma.authors.findMany({
                 //paginacion de consultas
-                first, skip
+                //order by en consultas
+                first, skip, orderBy
             });
         }
 

@@ -1,8 +1,22 @@
 type Query {
     quantity: Int
     user(id: ID): [User!]!
-    author(id: ID, first: Int, skip: Int): [Author!]!
+    author(
+        id: ID, first: Int, skip: Int, 
+        orderBy: AuthorOrderByInput
+    ): [Author!]!
     book(id: ID): [Book!]!
+}
+
+input AuthorOrderByInput {
+    id: orderByArg
+    name: orderByArg
+    country: orderByArg
+}
+
+enum orderByArg {
+    asc
+    desc
 }
 
 type User {
