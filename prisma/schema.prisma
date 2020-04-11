@@ -24,8 +24,8 @@ model books {
   register_by Int
   title       String
   writted_by  Int
-  users       users  @relation(fields: [register_by], references: [id])
-  authors     authors  @relation(fields: [writted_by], references: [id])
+  users       users   @relation(fields: [register_by], references: [id])
+  authors     authors @relation(fields: [writted_by], references: [id])
 }
 
 model users {
@@ -33,6 +33,7 @@ model users {
   id       Int       @default(autoincrement()) @id
   lastname String
   name     String
+  password String
   authors  authors[]
   books    books[]
 }
