@@ -39,10 +39,10 @@ const Mutation = {
     },
     updateAuthor: async (parent, {id, data}, {prisma, pubsub}, info) =>{
 
-        const { register_by } = data;
+        const { register_by, ...rest } = data;
 
         if(register_by){//si se esta cambiando el author
-            data.users = {
+            rest.users = {
                 connect: {
                     id: Number(register_by)
                 }
@@ -53,7 +53,7 @@ const Mutation = {
             where:{
                 id: Number(id)
             },
-            data
+            data: { ...rest }
         });
 
         //canal y payload
@@ -98,15 +98,15 @@ const Mutation = {
     },
     updateBook: async (parent, {id, data}, {prisma, pubsub}, info) =>{
 
-        const { writted_by, register_by } = data;
+        const { writted_by, register_by, ...rest } = data;
 
         if(writted_by){//en caso de que se edite el autor
-            data.authors = {
+            rest.authors = {
                 connect: { id: Number(writted_by) }
             }
         }
         if(register_by){//en caso de que se eudite el creador
-            data.users = {
+            rest.users = {
                 connect: { id: Number(register_by) }
             }
         }
@@ -115,7 +115,7 @@ const Mutation = {
             where: {
                 id: Number(id)
             },
-            data
+            data: { ...rest }
         });
 
         pubsub.publish(`book-${bookUpdated.writted_by}`, {

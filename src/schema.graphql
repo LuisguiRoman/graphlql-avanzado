@@ -1,5 +1,4 @@
 type Query {
-    hello(name: String): String!
     quantity: Int
     user(id: ID): [User!]!
     author(id: ID): [Author!]!
@@ -33,9 +32,9 @@ type Book {
 
 type Mutation {
     createUser(data: createUserInput): User!
-    updateUser(data: updateUserInput): User!
+    updateUser(id: ID!, data: updateUserInput): User!
     createAuthor(data: createAuthorInput): Author!
-    updateAuthor(data: updateAuthorInput): Author!
+    updateAuthor(id: ID!, data: updateAuthorInput): Author!
     createBook(data: createBookInput): Book!
     updateBook(id: ID!, data: updateBookInput): Book!
     deleteBook(id: ID!): Book!
@@ -61,7 +60,6 @@ input createAuthorInput {
 }
 
 input updateAuthorInput {
-    id: ID!
     name: String
     country: String
     register_by: ID
