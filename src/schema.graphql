@@ -5,13 +5,22 @@ type Query {
         id: ID, first: Int, skip: Int, 
         orderBy: AuthorOrderByInput
     ): [Author!]!
-    book(id: ID): [Book!]!
+    book(
+        id: ID, first: Int, skip: Int, 
+        orderBy: BookOrderByInput
+    ): [Book!]!
 }
 
 input AuthorOrderByInput {
     id: orderByArg
     name: orderByArg
     country: orderByArg
+}
+
+input BookOrderByInput {
+    title: orderByArg
+    price: orderByArg
+    quantity: orderByArg
 }
 
 enum orderByArg {
