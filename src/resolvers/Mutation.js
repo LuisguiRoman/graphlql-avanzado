@@ -1,4 +1,4 @@
-import { generateToken, hashPassword, validatePassword } from '../utils';
+import { generateToken, hashPassword, validatePassword, getUserID } from '../utils';
 
 
 const Mutation = {
@@ -37,7 +37,9 @@ const Mutation = {
         }
 
     },
-    updateUser: async (_, { id, data }, { prisma }, info) =>{
+    updateUser: async (_, { id, data }, { request, prisma }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
+
         const { password } = data;
 
         if(password){//hashear contraseña si se actualiza
@@ -50,7 +52,8 @@ const Mutation = {
             data
         });
     },
-    createAuthor: async (parent, {data}, {prisma, pubsub}, info) =>{
+    createAuthor: async (parent, {data}, { request, prisma, pubsub}, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
         
         const { register_by, ...rest } = data;
 
@@ -76,7 +79,8 @@ const Mutation = {
 
         return newAuthor;
     },
-    updateAuthor: async (parent, {id, data}, {prisma, pubsub}, info) =>{
+    updateAuthor: async (parent, {id, data}, { request, prisma, pubsub }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
 
         const { register_by, ...rest } = data;
 
@@ -105,7 +109,8 @@ const Mutation = {
 
         return authorUpdated;
     },
-    createBook: async (parent, {data}, {prisma, pubsub}, info) =>{
+    createBook: async (parent, {data}, { request, prisma, pubsub }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
         
         const { writted_by, register_by, ...rest } = data;
 
@@ -135,7 +140,8 @@ const Mutation = {
 
         return newBook;
     },
-    updateBook: async (parent, {id, data}, {prisma, pubsub}, info) =>{
+    updateBook: async (parent, {id, data}, { request, prisma, pubsub }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
 
         const { writted_by, register_by, ...rest } = data;
 
@@ -166,7 +172,8 @@ const Mutation = {
 
         return bookUpdated;
     },
-    deleteBook: async (parent, {id}, {prisma, pubsub}, info) =>{
+    deleteBook: async (parent, {id}, { request, prisma, pubsub }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
         
         const bookDeleted = await prisma.books.delete({
             where: {

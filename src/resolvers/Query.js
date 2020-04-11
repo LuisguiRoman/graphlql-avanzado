@@ -1,5 +1,10 @@
+import { getUserID } from '../utils';
+
+
 const Query = {
-    user: (parent, {id}, {prisma}, info) =>{
+    user: (_, {id}, { request, prisma }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
+
         if(!id){//si no tienen id
             //buscar todos los usuarios con prisma
             return prisma.users.findMany();
@@ -10,7 +15,9 @@ const Query = {
             where: { id }
         });
     },
-    author: (parent, {id}, {prisma}, info) =>{
+    author: (_, {id}, { request, prisma }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
+
         if(!id){
             //buscar todos los autores
             return prisma.authors.findMany();
@@ -21,7 +28,9 @@ const Query = {
             where: { id }
         });
     },
-    book: (parent, {id}, {prisma}, info) =>{
+    book: (_, {id}, { request, prisma }, info) =>{
+        const userId = getUserID(request);//ejecutar middleware
+
         if(!id){
             //buscar todos los libros
             return prisma.books.findMany();

@@ -4,8 +4,19 @@ import bcrypt from 'bcrypt';
 
 const SECRET = 'random';
 
-export const getUserID = () =>{
-    return 'Hola';
+//middleware
+export const getUserID = (request) =>{
+    //obtener la autorizacion de los headers
+    const header = request.get('authorization');
+
+    if(header){
+        const token = header.replace('Bearer ', '');
+        const { userId } = jwt.verify(token, SECRET);
+
+        return userId;
+    }
+    
+    throw new Error('Autenticacion requerida');
 }
 
 export const hashPassword = async (password) =>{
