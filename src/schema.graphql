@@ -30,8 +30,14 @@ type Book {
     register_by: User!
 }
 
+type AuthPayload {
+    user: User!
+    token: String!
+}
+
 type Mutation {
-    createUser(data: createUserInput): User!
+    singUp(data: singUpInput): AuthPayload!
+    login(data: loginInput): AuthPayload!
     updateUser(id: ID!, data: updateUserInput): User!
     createAuthor(data: createAuthorInput): Author!
     updateAuthor(id: ID!, data: updateAuthorInput): Author!
@@ -40,17 +46,23 @@ type Mutation {
     deleteBook(id: ID!): Book!
 }
 
-input createUserInput {
+input singUpInput {
     name: String!
     lastname: String!
     email: String!
+    password: String!
+}
+
+input loginInput {
+    email: String!
+    password: String!
 }
 
 input updateUserInput {
-    id: ID!
     name: String
     lastname: String
     email: String
+    password: String!
 }
 
 input createAuthorInput {

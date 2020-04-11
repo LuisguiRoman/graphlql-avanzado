@@ -1,13 +1,52 @@
-import { v4 as uuidv4 } from 'uuid';
+import { generateToken, hashPassword, validatePassword } from '../utils';
+
 
 const Mutation = {
-    createUser: (parent, {data}, {prisma}, info) =>{
-        return prisma.users.create({ data });
+    singUp: async (parent, {data}, {prisma}, info) =>{
+        const password = await hashPassword(data.password);
+
+        const user = await prisma.users.create({
+            data: {
+                ...data,
+                password
+            }
+        });
+
+        return {
+            user,
+            token: generateToken(user.id)
+        }
     },
-    updateUser: (parent, {id, ...data}, {prisma}, info) =>{
+    login: async (_, { data }, { prisma }) =>{
+        const user = await prisma.users.findOne({
+            where: {
+                email: data.email
+            }
+        });
+
+        //Validar contraseñas
+        const isValid = await validatePassword(data.password, user.password);
+
+        if(!isValid){
+            throw new Error('Contraseña incorrecta');
+        }
+
+        return {
+            user,
+            token: generateToken(user.id)
+        }
+
+    },
+    updateUser: async (_, { id, data }, { prisma }, info) =>{
+        const { password } = data;
+
+        if(password){//hashear contraseña si se actualiza
+            data.password = await hashPassword(data.password);
+        }
+
         //busca por id y actualiza los datos
         return prisma.users.update({
-            where: { id },
+            where: { id: Number(id) },
             data
         });
     },
