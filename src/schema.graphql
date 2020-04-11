@@ -1,7 +1,7 @@
 type Query {
     quantity: Int
     user(id: ID): [User!]!
-    author(id: ID): [Author!]!
+    author(id: ID, first: Int, skip: Int): [Author!]!
     book(id: ID): [Book!]!
 }
 
